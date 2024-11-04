@@ -1,0 +1,22 @@
+import discord
+from discord.ext import commands
+import os
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'Logged in as {bot.user}')
+    
+
+    for filename in os.listdir('./Cogs'):
+        if filename.endswith('.py'):
+            await bot.load_extension(f'Cogs.{filename[:-3]}')
+            print(f'Loaded extension: {filename[:-3]}')
+
+
+bot.run('MTMwMDk3Mzk2Nzc0NTYxODA3Mg.GZAsDr.cUFMJjYX4r_u1bGtf24Lu2hbrUdjOqQoizFp98')
+
+
