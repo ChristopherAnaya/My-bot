@@ -6,7 +6,9 @@ c.execute('''
         ball_name TEXT PRIMARY KEY,
         emoji_id TEXT,
         base_atk TEXT,
-        base_hp TEXT          
+        base_hp TEXT,
+        ball_ability TEXT,
+        ball_description TEXT          
     )
 ''')
 conn.commit()
@@ -16,10 +18,12 @@ def add_ball():
     emoji_id = input("Enter the emoji ID: ")
     base_atk = input("Enter the ATK: ")
     base_hp = input("Enter the HP: ")
+    ball_ability= input("Enter the ability: ")
+    ball_description = input("Enter the description: ")
     try:
-        c.execute('INSERT INTO ball_data (ball_name, emoji_id, base_atk, base_hp) VALUES (?, ?, ?, ?)', (ball_name, emoji_id, base_atk, base_hp))
+        c.execute('INSERT INTO ball_data (ball_name, emoji_id, base_atk, base_hp, ball_ability, ball_description) VALUES (?, ?, ?, ?, ?, ?)', (ball_name, emoji_id, base_atk, base_hp, ball_ability, ball_description))
         conn.commit()
-        print(f"Ball '{ball_name}' with ID {emoji_id} with ATK {base_atk} with HP {base_hp} added successfully.")
+        print(f"Ball '{ball_name}' with ID {emoji_id} with ATK {base_atk} with HP {base_hp} with ability {ball_ability} with description {ball_description} added successfully.")
     except sqlite3.IntegrityError:
         print(f"Error: '{ball_name}' already exists in the database.")
 while True:

@@ -1,6 +1,6 @@
 from discord.ext import commands
-from databases.databases import load_data
-cursor, cursor2, conn, conn2 = load_data()
+from Databases.databases import load_data
+cursor, _, _, _, _, _ = load_data()
 
 class CaughtCommands(commands.Cog):
     def __init__(self, bot):
@@ -8,7 +8,6 @@ class CaughtCommands(commands.Cog):
 
     @commands.command()
     async def caught(self, ctx):
-        cursor, _, _, _ = load_data()  # Ensure to load the database connection here
         cursor.execute('SELECT * FROM catches WHERE user_id = ?', (ctx.author.id,))
         user_catches = cursor.fetchall()
         

@@ -1,7 +1,4 @@
 import sqlite3
-
-
-
 def load_data():
     conn = sqlite3.connect("catch_data.db")
     cursor = conn.cursor()
@@ -11,7 +8,7 @@ def load_data():
             catch_name TEXT,
             catch_id TEXT,
             catch_stats TEXT,
-            catch_time TEXT
+            catch_time TEXT 
         )
     ''')
     conn.commit()
@@ -22,8 +19,19 @@ def load_data():
             ball_name TEXT PRIMARY KEY,
             emoji_id TEXT,
             base_atk TEXT,
-            base_hp TEXT          
+            base_hp TEXT,
+            ball_ability TEXT,
+            ball_description TEXT          
         )
     ''')
-    conn.commit()
-    return cursor, cursor2, conn, conn2
+    conn2.commit()
+    conn3 = sqlite3.connect('user_data.db')
+    cursor3 = conn3.cursor()
+    cursor3.execute('''
+        CREATE TABLE IF NOT EXISTS user_data (
+            user_id TEXT,
+            ball_name TEXT        
+        )
+    ''')
+    conn3.commit()
+    return cursor, cursor2, cursor3, conn, conn2, conn3

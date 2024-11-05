@@ -1,3 +1,5 @@
+"""dear future me the bot does not handle having more then one inctance at once. should not be to big an issue"""
+
 import discord
 from discord.ext import commands
 import os
@@ -18,5 +20,3 @@ async def on_ready():
 
 
 bot.run('MTMwMDk3Mzk2Nzc0NTYxODA3Mg.GZAsDr.cUFMJjYX4r_u1bGtf24Lu2hbrUdjOqQoizFp98')
-
-

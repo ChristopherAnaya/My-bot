@@ -4,9 +4,9 @@ from discord.ui import Modal, TextInput, Button, View
 import random
 import os
 import datetime
-from databases.databases import load_data
+from Databases.databases import load_data
 
-cursor, cursor2, conn, conn2 = load_data()
+cursor, _, cursor3, conn, _, conn3 = load_data()
 
 files = os.listdir(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts")
 
@@ -31,6 +31,9 @@ class UserInfoModal(Modal):
             ballstatsuse = "/".join([("+" if x[0] != "-" else "") + x + "%" for x in ballstats.split(":")])
             cursor.execute('SELECT COUNT(*) FROM catches WHERE catch_name = ?', (name,))
             ballid = str(cursor.fetchone()[0] + 1).zfill(8)
+            if not cursor3.execute('SELECT * FROM user_data WHERE user_id = ? AND ball_name = ?', (str(interaction.user.id), ballname,)).fetchall():
+                cursor3.execute('INSERT INTO user_data (user_id, ball_name) VALUES (?, ?)', (str(interaction.user.id), ballname)) 
+                conn3.commit()
             cursor.execute('INSERT INTO catches (user_id, catch_name, catch_id, catch_stats, catch_time) VALUES (?, ?, ?, ?, ?)', (str(interaction.user.id), ballname, ballid, ballstats, balltime))
             conn.commit()
             await interaction.response.send_message(f"{interaction.user.mention} You caught **{name}!** `(#{ballid}, {ballstatsuse})`")

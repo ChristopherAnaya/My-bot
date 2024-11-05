@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands
 from discord.ui import View
-from PIL import Image, ImageDraw, ImageFont
+from Extras.card_maker import create_card
 import datetime
 import time
-import io
-from databases.databases import load_data
-cursor, cursor2, conn, conn2 = load_data()
+from Databases.databases import load_data
+cursor, cursor2, _, _, _, _ = load_data()
 
 class MenuCog(commands.Cog):
     def __init__(self, bot):
@@ -18,29 +17,6 @@ class MenuCog(commands.Cog):
         if not result:
             await ctx.reply("You don't have any balls!")
         else:
-            def create_card(atk, hp, x):
-                base_image = Image.open(rf"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Card_art\{x}_Card.png").convert("RGBA")
-                font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Fonts\DejaVuSansCondensed-Bold.ttf", size=30)
-                
-                draw = ImageDraw.Draw(base_image)
-
-                hp_position = (85, 475)
-
-                atk_text_bbox = draw.textbbox((0, 0), f"{atk}", font=font)
-                atk_text_width = atk_text_bbox[2] - atk_text_bbox[0]
-                
-                atk_position = (max(288 - ((len(str(atk)) - 3)*10) -  atk_text_width // 2, 200), 475)
-
-                draw.text(atk_position, f"{atk}", font=font, fill=(255, 170, 51))
-                draw.text(hp_position, f"{hp}", font=font, fill=(255, 77, 77))
-
-                image_binary = io.BytesIO()
-                base_image.save(image_binary, 'PNG')
-                image_binary.seek(0)
-
-                return image_binary
-
-
             class Dropdown(discord.ui.Select):
                 def __init__(self):
                     allballs = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (ctx.author.id,)).fetchall()
@@ -65,13 +41,15 @@ class MenuCog(commands.Cog):
                         "",
                         f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[0]) / 100 + 1 ))}" + \
                         f" ({("+" if choice[3].split(':')[0][0] != "-" else "") + str(int(choice[3].split(':')[0]))}%)",
-                        f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[1]) / 100 + 1 ))}" + \
+                        f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[3].split(':')[1]) / 100 + 1 ))}" + \
                         f" ({("+" if choice[3].split(':')[1][0] != "-" else "") + str(int(choice[3].split(':')[1]))}%)",
                     ])
-                    
+
                     with open(rf"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Card_art\{choice[1]}_Card.png", "rb") as image_file:  
                         await interaction.response.send_message(content=content, file=discord.File(fp=create_card(int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[0]) / 100 + 1 )),
-                        int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[1]) / 100 + 1 )), choice[1]), filename="card.png"))
+                        int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[3].split(':')[1]) / 100 + 1 )), choice[1],
+                        cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[4],
+                        cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[5]), filename="card.png"))
 
             class DropdownView(View):
                 def __init__(self):
