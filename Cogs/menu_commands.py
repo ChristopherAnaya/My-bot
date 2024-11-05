@@ -19,8 +19,8 @@ class MenuCog(commands.Cog):
             await ctx.reply("You don't have any balls!")
         else:
             def create_card(atk, hp, x):
-                base_image = Image.open(rf"C:\Users\Chris\OneDrive\Documents\Bot Stuff\Art\Card_art\{x}_Card.png").convert("RGBA")
-                font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Bot Stuff\Fonts\DejaVuSansCondensed-Bold.ttf", size=30)
+                base_image = Image.open(rf"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Card_art\{x}_Card.png").convert("RGBA")
+                font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Fonts\DejaVuSansCondensed-Bold.ttf", size=30)
                 
                 draw = ImageDraw.Draw(base_image)
 
@@ -69,7 +69,7 @@ class MenuCog(commands.Cog):
                         f" ({("+" if choice[3].split(':')[1][0] != "-" else "") + str(int(choice[3].split(':')[1]))}%)",
                     ])
                     
-                    with open(rf"C:\Users\Chris\OneDrive\Documents\Bot Stuff\Art\Card_art\{choice[1]}_Card.png", "rb") as image_file:  
+                    with open(rf"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Card_art\{choice[1]}_Card.png", "rb") as image_file:  
                         await interaction.response.send_message(content=content, file=discord.File(fp=create_card(int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[0]) / 100 + 1 )),
                         int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[1]) / 100 + 1 )), choice[1]), filename="card.png"))
 

@@ -8,7 +8,7 @@ from databases.databases import load_data
 
 cursor, cursor2, conn, conn2 = load_data()
 
-files = os.listdir(r"C:\Users\Chris\OneDrive\Documents\Bot Stuff\Art\Spawn Arts")
+files = os.listdir(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts")
 
 class UserInfoModal(Modal):
     def __init__(self, view, button, clicked, current):
@@ -57,7 +57,7 @@ class ImageCog(commands.Cog):
         button.callback = button_callback
         view = View()
         view.add_item(button)
-        await ctx.send(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\OneDrive\Documents\Bot Stuff\Art\Spawn Arts\{self.current}"), view=view)
+        await ctx.send(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
 
 async def setup(bot):
     await bot.add_cog(ImageCog(bot))
