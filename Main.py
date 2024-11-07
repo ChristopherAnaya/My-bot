@@ -12,11 +12,14 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user}')
     
-
     for filename in os.listdir('./Cogs'):
         if filename.endswith('.py'):
             await bot.load_extension(f'Cogs.{filename[:-3]}')
             print(f'Loaded extension: {filename[:-3]}')
 
+    channel = bot.get_channel(1245675428367175753) 
+
+    if channel:
+        await channel.send("The bot is online!")
 
 bot.run('MTMwMDk3Mzk2Nzc0NTYxODA3Mg.GZAsDr.cUFMJjYX4r_u1bGtf24Lu2hbrUdjOqQoizFp98')
