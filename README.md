@@ -1,0 +1,1 @@
+Hello. If you want to use this code their are somethings you must do. The main thing is chnage the paths from mine to yours not to hard. Note that as of now the fonts are only allowed to be used for testig pruposes and must be swapped out.
