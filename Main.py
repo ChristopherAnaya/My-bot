@@ -17,6 +17,9 @@ async def on_ready():
             await bot.load_extension(f'Cogs.{filename[:-3]}')
             print(f'Loaded extension: {filename[:-3]}')
 
+    await bot.tree.sync() 
+    print("Slash commands synced.") 
+
     channel = bot.get_channel(1245675428367175753) 
 
     if channel:

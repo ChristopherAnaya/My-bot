@@ -2,6 +2,7 @@
 
 import discord
 from discord.ext import commands
+from discord import app_commands
 from Databases.databases import load_data
 _, cursor2, cursor3, _, _, _ = load_data()
 
@@ -9,11 +10,11 @@ class CompletionCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def completion(self, ctx):
+    @app_commands.command(name="completion", description="Shows your completion of owned and missing TestBalls.")
+    async def completion(self, interaction: discord.Interaction):
 
         emojis = {x[0]:x[1] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()}
-        owned = [x[1] for x in cursor3.execute('SELECT * FROM user_data WHERE user_id = ?', (str(ctx.author.id),)).fetchall()]
+        owned = [x[1] for x in cursor3.execute('SELECT * FROM user_data WHERE user_id = ?', (str(interaction.user.id),)).fetchall()]
         not_owned = [x[0] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()]
         
         for x in owned:
@@ -30,12 +31,14 @@ class CompletionCog(commands.Cog):
         not_owned_rows = [not_owned[i:i + emojis_per_row] for i in range(0, len(not_owned), emojis_per_row)]
         not_owned_text = "\n".join(" ".join(row) for row in not_owned_rows)
         
-        embed.set_author(name=ctx.author.display_name, icon_url=ctx.author.avatar.url)
+        embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.avatar.url)
         embed.add_field(name="__Owned TestBalls__", value=owned_text, inline=False)
         embed.add_field(name=("__:tada: No missing countryball, congratulations! :tada:__" if len(owned) / len(emojis) == 1 else "__Missing TestBalls__"), value=not_owned_text, inline=False)
 
-        await ctx.send(embed=embed)
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
+    if bot.tree.get_command("completion"):
+        bot.tree.remove_command("completion")
     await bot.add_cog(CompletionCog(bot))

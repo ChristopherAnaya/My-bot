@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 from discord.ui import Modal, TextInput, Button, View
 import random
 import os
@@ -48,8 +49,8 @@ class ImageCog(commands.Cog):
         self.clicked = False  
         self.current = None
     
-    @commands.command()
-    async def image(self, ctx):
+    @app_commands.command(name="image", description="Displays a random image and allows you to guess its name.")
+    async def image(self, interaction: discord.Interaction):
         self.current = random.choice(files)
         button = Button(label="Click Me!", style=discord.ButtonStyle.primary)
      
@@ -60,7 +61,9 @@ class ImageCog(commands.Cog):
         button.callback = button_callback
         view = View()
         view.add_item(button)
-        await ctx.send(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
+        await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
 
 async def setup(bot):
+    if bot.tree.get_command("image"):
+        bot.tree.remove_command("image")
     await bot.add_cog(ImageCog(bot))
