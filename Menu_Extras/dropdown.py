@@ -6,8 +6,8 @@ from Databases.databases import load_data
 cursor, cursor2, _, _, _, _ = load_data()
 
 def paginate(allballs, page=1):
-    start_index = (page - 1) * 25
-    end_index = page * 25
+    start_index = (page - 1) * 15
+    end_index = page * 15
     return allballs[start_index:end_index]
 
 class Dropdown(discord.ui.Select):
