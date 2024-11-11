@@ -1,1 +1,1 @@
-print(type(2) is int)
+print(200/100 +1)

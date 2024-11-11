@@ -1,3 +1,4 @@
+atk, hp
 blue = 100, 400
 green = 200, 300
 red = 300, 200

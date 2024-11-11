@@ -3,20 +3,106 @@ from discord.ext import commands
 from discord import app_commands
 from Menu_Extras import DropdownView
 from Databases.databases import load_data
-cursor, _, _, _, _, _ = load_data()
+cursor, cursor2, _, _, _, _ = load_data()
 
 class MenuCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @app_commands.command(name="menu", description="Shows your completion of owned and missing TestBalls.")
-    async def show_menu(self, interaction: discord.Interaction):
-        result = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (interaction.user.id,)).fetchone()
-        if not result:
-            await interaction.response.send_message("You don't have any testballs yet!")
+    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
+    @app_commands.describe(reverse="Reverse this shit")
+    @app_commands.describe(ball="The specific ball you want")
+    @app_commands.describe(sort="The specific ball you want")
+    async def show_menu(self, interaction: discord.Interaction, user: discord.User = None, reverse: bool = False, ball: str = None, sort: str = None):
+        if user is None:
+            user = interaction.user
+        
+        if not cursor.execute('SELECT * FROM catches WHERE user_id = ?', (user.id,)).fetchone():
+            if user.id == interaction.user.id:
+                await interaction.response.send_message("You don't have any testballs yet!")
+            else:
+                await interaction.response.send_message(f"{user.name} doesn't have any testballs yet!")
+        elif ball != None and not cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ?', (user.id, ball)).fetchone():
+            if user.id == interaction.user.id:
+                await interaction.response.send_message(f"You don't have any {ball}s yet!")
+            else:
+                await interaction.response.send_message(f"{user.name} doesn't have any {ball} yet!")
+       
+       
         else:    
-            allballs = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (interaction.user.id,)).fetchall()
+            allballs = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (user.id,)).fetchall()
+            allballs = sorted(allballs, key = lambda x: x[2])
+            if ball:
+                allballs = [x for x in allballs if x[1] == ball]
+            
+            if reverse:
+                allballs = allballs[::-1]
+
+            def ball_data(x):
+                return cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()
+
+            def atk(x):
+                return int(int(ball_data(x)[2]) * (int(x[3].split(':')[0]) / 100 + 1 ))
+
+            def hp(x):
+                return int(int(ball_data(x)[3]) * (int(x[3].split(':')[1]) / 100 + 1 ))
+
+            if sort == "alphabetic":
+                allballs = sorted(allballs, key = lambda x: x[1])
+            elif sort == "catch_date":
+                allballs = sorted(allballs, key = lambda x: x[4])
+            elif sort == "rarity":
+                pass
+            elif sort == "health":
+                allballs = sorted(allballs, key = lambda x: hp(x), reverse = True)
+            elif sort == "attack":
+                allballs = sorted(allballs, key = lambda x: atk(x), reverse = True)
+            elif sort == "health_bonus":
+                allballs = sorted(allballs, key = lambda x: int(x[3].split(":")[1]), reverse = True)
+            elif sort == "attack_bonus":
+                allballs = sorted(allballs, key = lambda x: int(x[3].split(":")[0]), reverse = True)
+            elif sort == "stats_bonus":
+                allballs = sorted(allballs, key = lambda x: sum([int(z) for z in x[3].split(":")]), reverse = True)
+            elif sort == "total_stats":
+                allballs = sorted(allballs, key = lambda x: atk(x) + hp(x), reverse = True)
+            elif sort == "duplicates":
+                pass
+
+           
+
+
+
+
+
             await interaction.response.send_message("Choose an option:", view=DropdownView(allballs, 1, interaction.user.id))
+
+    @show_menu.autocomplete("ball")
+    async def autocomplete_callback(self, interaction: discord.Interaction, current: str):
+        ball_options = [x[0] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()]
+        suggestions = [ball for ball in ball_options if current.lower() in ball.lower()]
+        return [
+            app_commands.Choice(name=suggestion, value=suggestion) for suggestion in suggestions
+        ]
+    
+    @show_menu.autocomplete("sort")
+    async def autocomplete_callback(self, interaction: discord.Interaction, current: str):
+        sort_options = [
+            "alphabetic",
+            "catch_date",
+            "rarity",
+            "health",
+            "attack",
+            "health_bonus",
+            "attack_bonus",
+            "stats_bonus",
+            "total_stats",
+            "duplicates"
+        ]
+        sorts = [sort for sort in sort_options if current.lower() in sort.lower()]
+        return [
+            app_commands.Choice(name=x, value=x) for x in sorts
+        ]
 
 async def setup(bot):
     if bot.tree.get_command("menu"):
