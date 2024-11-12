@@ -14,11 +14,11 @@ class Dropdown(discord.ui.Select):
     def __init__(self, allballs, page, author):
         self.author = author
         options = [discord.SelectOption(label=f"#{x[2]} {x[1]}",
-        description = f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3].split(':')[0]) / 100 + 1 ))}" \
-        f"({'+' if x[3].split(':')[0][0] != '-' else ''}{str(int(x[3].split(':')[0]))}%)∙" \
-        f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[3].split(':')[1]) / 100 + 1 ))}" \
-        f"({'+' if x[3].split(':')[1][0] != '-' else ''}{str(int(x[3].split(':')[1]))}%)∙" \
-        f"{''.join('/' if z == '-' else ' | ' if z == ' ' else z for z in x[4])}",
+        description = f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3]) / 100 + 1 ))}" \
+        f"({'+' if x[3][0] != '-' else ''}{str(int(x[3]))}%)∙" \
+        f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[4]) / 100 + 1 ))}" \
+        f"({'+' if x[4][0] != '-' else ''}{str(int(x[4]))}%)∙" \
+        f"{''.join('/' if z == '-' else ' | ' if z == ' ' else z for z in x[5])}",
         emoji=cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[1]) for x in paginate(allballs, page)]
         super().__init__(placeholder="Make a selection", options=options)
         
@@ -27,7 +27,7 @@ class Dropdown(discord.ui.Select):
             await interaction.response.send_message("This Page Cannot Be Controlled By You, Sorry!", ephemeral=True)
         else:
             choice = cursor.execute('SELECT * FROM catches WHERE catch_id = ? AND catch_name = ?', (self.values[0].split(" ")[0][1:], self.values[0].split(" ")[1])).fetchone()
-            time_convert = "".join(x if x not in ["-", ":"] else " " for x in choice[-1]).split()
+            time_convert = "".join(x if x not in ["-", ":"] else " " for x in choice[5]).split()
             dt = datetime.datetime(int(time_convert[0]), int(time_convert[1]), int(time_convert[2]), int(time_convert[3]), int(time_convert[4]))
             timestamp = int(time.mktime(dt.timetuple()))
             content = "\n".join([
@@ -35,14 +35,14 @@ class Dropdown(discord.ui.Select):
                 f"Caught on <t:{timestamp}:f> (<t:{timestamp}:R>)",
                 "THIS IS PLACEHOLDER TEXT FOR WHEN I DECIDE I FEEL LIKE MAKING TRADING WORK",
                 "",
-                f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[0]) / 100 + 1 ))}" + \
-                f" ({("+" if choice[3].split(':')[0][0] != "-" else "") + str(int(choice[3].split(':')[0]))}%)",
-                f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[3].split(':')[1]) / 100 + 1 ))}" + \
-                f" ({("+" if choice[3].split(':')[1][0] != "-" else "") + str(int(choice[3].split(':')[1]))}%)",
+                f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3]) / 100 + 1 ))}" + \
+                f" ({("+" if choice[3][0] != "-" else "") + str(int(choice[3]))}%)",
+                f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[4]) / 100 + 1 ))}" + \
+                f" ({("+" if choice[4][0] != "-" else "") + str(int(choice[4]))}%)",
             ])
 
             with open(rf"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Card_art\{choice[1]}_Card.png", "rb") as image_file:  
-                await interaction.response.send_message(content=content, file=discord.File(fp=create_card(int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3].split(':')[0]) / 100 + 1 )),
-                int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[3].split(':')[1]) / 100 + 1 )), choice[1],
+                await interaction.response.send_message(content=content, file=discord.File(fp=create_card(int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3]) / 100 + 1 )),
+                int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[4]) / 100 + 1 )), choice[1],
                 cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[4],
                 cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[5]), filename="card.png"))

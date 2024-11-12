@@ -38,10 +38,10 @@ class PageModal(Modal):
                 self.view.children[7].options = [
                     discord.SelectOption(
                         label=f"#{x[2]} {x[1]}",
-                        description=f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3].split(':')[0]) / 100 + 1 ))} " \
-                                    f"({'+' if x[3].split(':')[0][0] != '-' else ''}{str(int(x[3].split(':')[0]))}%)∙" \
-                                    f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[3].split(':')[1]) / 100 + 1 ))} " \
-                                    f"({'+' if x[3].split(':')[1][0] != '-' else ''}{str(int(x[3].split(':')[1]))}%)",
+                        description=f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3]) / 100 + 1 ))} " \
+                                    f"({'+' if x[3][0] != '-' else ''}{str(int(x[3]))}%)∙" \
+                                    f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[4]) / 100 + 1 ))} " \
+                                    f"({'+' if x[4][0] != '-' else ''}{str(int(x[4]))}%)",
                         emoji=cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[1]
                     )
                     for x in paginated_balls

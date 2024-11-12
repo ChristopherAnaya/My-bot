@@ -7,7 +7,8 @@ def load_data():
             user_id TEXT,
             catch_name TEXT,
             catch_id TEXT,
-            catch_stats TEXT,
+            catch_atk TEXT,
+            catch_hp TEXT,
             catch_time TEXT 
         )
     ''')
@@ -21,7 +22,8 @@ def load_data():
             base_atk TEXT,
             base_hp TEXT,
             ball_ability TEXT,
-            ball_description TEXT          
+            ball_description TEXT,  
+            ball_rarity TEXT        
         )
     ''')
     conn2.commit()

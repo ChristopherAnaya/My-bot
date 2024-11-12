@@ -3,3 +3,6 @@ blue = 100, 400
 green = 200, 300
 red = 300, 200
 yellow = 400, 100    
+rarity 1 =  10% blue
+rarity 2 = 25% red
+rarity 3 = 65% green yellow
