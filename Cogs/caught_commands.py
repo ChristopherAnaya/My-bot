@@ -4,7 +4,7 @@ from discord import app_commands
 from Databases.databases import load_data
 cursor, _, _, _, _, _ = load_data()
 
-class CaughtCommands(commands.Cog):
+class CaughtCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -22,4 +22,4 @@ class CaughtCommands(commands.Cog):
 async def setup(bot):
     if bot.tree.get_command("caught"):
         bot.tree.remove_command("caught")
-    await bot.add_cog(CaughtCommands(bot))
+    await bot.add_cog(CaughtCommand(bot))

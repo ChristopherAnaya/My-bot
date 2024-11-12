@@ -9,7 +9,9 @@ def load_data():
             catch_id TEXT,
             catch_atk TEXT,
             catch_hp TEXT,
-            catch_time TEXT 
+            catch_time TEXT,
+            favorite BOOLEAN DEFAULT FALSE,
+            past_owner TEXT DFAULT NULL
         )
     ''')
     conn.commit()

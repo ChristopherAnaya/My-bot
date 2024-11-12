@@ -48,7 +48,7 @@ class PageButton(discord.ui.Button):
             paginated_balls = paginate(self.allballs, new_page)
             self.view.children[7].options = [
                 discord.SelectOption(
-                    label=f"#{x[2]} {x[1]}",
+                    label=f"{"❤️" if x[6] == 1 else ""}#{x[2]} {x[1]}",
                     description=f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3]) / 100 + 1 ))} " \
                                 f"({'+' if x[3][0] != '-' else ''}{str(int(x[3]))}%)∙" \
                                 f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[4]) / 100 + 1 ))} " \

@@ -4,6 +4,7 @@ import os
 #dear future me the bot does not handle having more then one inctance at once. should not be to big an issue
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event

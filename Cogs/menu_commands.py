@@ -5,7 +5,7 @@ from Menu_Extras import DropdownView
 from Databases.databases import load_data
 cursor, cursor2, _, _, _, _ = load_data()
 
-class MenuCog(commands.Cog):
+class MenuCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -32,16 +32,12 @@ class MenuCog(commands.Cog):
                 else:
                     await interaction.response.send_message(f"{user.name} doesn't have any {ball}s yet!")
         
-        
             else:    
                 allballs = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (user.id,)).fetchall()
-                allballs = sorted(allballs, key = lambda x: x[2])
+                allballs = sorted(allballs, key = lambda x: (-x[6], x[2]))
                 
                 if ball:
                     allballs = [x for x in allballs if x[1] == ball]
-                
-                if reverse:
-                    allballs = allballs[::-1]
 
                 def ball_data(x):
                     return cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()
@@ -74,13 +70,10 @@ class MenuCog(commands.Cog):
                 elif sort == "total_stats":
                     allballs = sorted(allballs, key = lambda x: atk(x) + hp(x), reverse = True)
                 elif sort == "duplicates":
-                    allballs = sorted(allballs, key = lambda x: (countballs(x[1]), x[1]), reverse = True)
+                    allballs = sorted(allballs, key = lambda x: (countballs(x[1]), x[1]), reverse = True)   
 
-            
-
-
-
-
+                if reverse:
+                    allballs = allballs[::-1]
 
                 await interaction.response.send_message("Choose an option:", view=DropdownView(allballs, 1, interaction.user.id))
 
@@ -114,4 +107,4 @@ class MenuCog(commands.Cog):
 async def setup(bot):
     if bot.tree.get_command("menu"):
         bot.tree.remove_command("menu")
-    await bot.add_cog(MenuCog(bot))
+    await bot.add_cog(MenuCommand(bot))

@@ -13,7 +13,7 @@ def paginate(allballs, page=1):
 class Dropdown(discord.ui.Select):
     def __init__(self, allballs, page, author):
         self.author = author
-        options = [discord.SelectOption(label=f"#{x[2]} {x[1]}",
+        options = [discord.SelectOption(label=f"{"❤️" if x[6] == 1 else ""}#{x[2]} {x[1]}",
         description = f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3]) / 100 + 1 ))}" \
         f"({'+' if x[3][0] != '-' else ''}{str(int(x[3]))}%)∙" \
         f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[4]) / 100 + 1 ))}" \
@@ -33,8 +33,7 @@ class Dropdown(discord.ui.Select):
             content = "\n".join([
                 f"ID:`#{choice[2]}`",
                 f"Caught on <t:{timestamp}:f> (<t:{timestamp}:R>)",
-                "THIS IS PLACEHOLDER TEXT FOR WHEN I DECIDE I FEEL LIKE MAKING TRADING WORK",
-                "",
+                f"Obtained by trade with user {interaction.guild.get_member(int(choice[7])) if interaction.guild.get_member(int(choice[7])) != None else f"with ID {choice[7]}"}\n " if choice[7] != None else " ",
                 f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3]) / 100 + 1 ))}" + \
                 f" ({("+" if choice[3][0] != "-" else "") + str(int(choice[3]))}%)",
                 f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[4]) / 100 + 1 ))}" + \

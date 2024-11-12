@@ -1,11 +1,10 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from Menu_Extras import DropdownView
 from Databases.databases import load_data
 cursor, cursor2, _, _, _, _ = load_data()
 
-class CountCog(commands.Cog):
+class CountCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
@@ -42,4 +41,4 @@ class CountCog(commands.Cog):
 async def setup(bot):
     if bot.tree.get_command("count"):
         bot.tree.remove_command("count")
-    await bot.add_cog(CountCog(bot))
+    await bot.add_cog(CountCommand(bot))

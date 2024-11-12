@@ -41,7 +41,6 @@ class UserInfoModal(Modal):
             ballHP = str(random.randint(-20, 20))
             ballstatsuse = "/".join([("+" if x[0] != "-" else "") + x + "%" for x in [ballATK, ballHP]])
 
-
             cursor.execute('SELECT COUNT(*) FROM catches WHERE catch_name = ?', (name,))
             ballid = str(cursor.fetchone()[0] + 1).zfill(8)
 
@@ -62,14 +61,14 @@ class UserInfoModal(Modal):
         else:
             await interaction.response.send_message(f"{interaction.user.mention} Wrong Name!")
 
-class ImageCog(commands.Cog):
+class SpawnCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.clicked = False  
         self.current = None
     
     @app_commands.command(name="image", description="Displays a random image and allows you to guess its name.")
-    async def image(self, interaction: discord.Interaction):
+    async def spawn(self, interaction: discord.Interaction):
         
         self.current = random.choice([x[0] + ".png" for x in cursor2.execute('SELECT * FROM ball_data WHERE ball_rarity = ?', (rarity(random.randint(0,100)),)).fetchall()])
         
@@ -85,6 +84,6 @@ class ImageCog(commands.Cog):
         await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
 
 async def setup(bot):
-    if bot.tree.get_command("image"):
-        bot.tree.remove_command("image")
-    await bot.add_cog(ImageCog(bot))
+    if bot.tree.get_command("spawn"):
+        bot.tree.remove_command("spawn")
+    await bot.add_cog(SpawnCommand(bot))

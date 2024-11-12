@@ -6,7 +6,7 @@ from discord import app_commands
 from Databases.databases import load_data
 _, cursor2, cursor3, _, _, _ = load_data()
 
-class CompletionCog(commands.Cog):
+class CompletionCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -43,4 +43,4 @@ class CompletionCog(commands.Cog):
 async def setup(bot):
     if bot.tree.get_command("completion"):
         bot.tree.remove_command("completion")
-    await bot.add_cog(CompletionCog(bot))
+    await bot.add_cog(CompletionCommand(bot))
