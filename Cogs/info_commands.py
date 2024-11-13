@@ -1,32 +1,26 @@
 import discord
-from Menu_Extras import create_card
+from discord.ext import commands
+from discord import app_commands
 import datetime
 import time
+from Menu_Extras import create_card
 from Databases.databases import load_data
-cursor, cursor2, _, _, _, _ = load_data()
+cursor, cursor2, _, conn, _, _ = load_data()
 
-def paginate(allballs, page=1):
-    start_index = (page - 1) * 15
-    end_index = page * 15
-    return allballs[start_index:end_index]
+class InfoCommand(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
 
-class Dropdown(discord.ui.Select):
-    def __init__(self, allballs, page, author):
-        self.author = author
-        options = [discord.SelectOption(label=f"{"❤️" if x[6] == 1 else ""}#{x[2]} {x[1]}",
-        description = f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3]) / 100 + 1 ))}" \
-        f"({'+' if x[3][0] != '-' else ''}{str(int(x[3]))}%)∙" \
-        f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[4]) / 100 + 1 ))}" \
-        f"({'+' if x[4][0] != '-' else ''}{str(int(x[4]))}%)∙" \
-        f"{''.join('/' if z == '-' else ' | ' if z == ' ' else z for z in x[5])}",
-        emoji=cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[1]) for x in paginate(allballs, page)]
-        super().__init__(placeholder="Make a selection", options=options)
-        
-    async def callback(self, interaction: discord.Interaction):
-        if interaction.user.id != self.author:
-            await interaction.response.send_message("This Page Cannot Be Controlled By You, Sorry!", ephemeral=True)
+    @app_commands.command(name="info", description="Info on a ball i think")
+    @app_commands.describe(ball="The ball")
+    async def info(self, interaction: discord.Interaction, ball: str):
+        ball = "".join([s.replace("🤍", "") for s in ball])
+        ball = ball.split()
+        print(ball)
+        if not cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ? AND catch_id = ?', (interaction.user.id, ball[1], ball[0][1:])).fetchone():
+            await interaction.response.send_message("The Testball Could Not Be Found", ephemeral = True)
         else:
-            choice = cursor.execute('SELECT * FROM catches WHERE catch_id = ? AND catch_name = ?', (self.values[0].split(" ")[0][1:], self.values[0].split(" ")[1])).fetchone()
+            choice = cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ? AND catch_id = ?', (interaction.user.id, ball[1], ball[0][1:])).fetchone()
             time_convert = "".join(x if x not in ["-", ":"] else " " for x in choice[5]).split()
             dt = datetime.datetime(int(time_convert[0]), int(time_convert[1]), int(time_convert[2]), int(time_convert[3]), int(time_convert[4]))
             timestamp = int(time.mktime(dt.timetuple()))
@@ -39,8 +33,23 @@ class Dropdown(discord.ui.Select):
                 f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[4]) / 100 + 1 ))}" + \
                 f" ({("+" if choice[4][0] != "-" else "") + str(int(choice[4]))}%)",
             ])
-
+            
             await interaction.response.send_message(content=content, file=discord.File(fp=create_card(int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[2]) *  (int(choice[3]) / 100 + 1 )),
             int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[3]) *  (int(choice[4]) / 100 + 1 )), choice[1],
             cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[4],
             cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[5]), filename="card.png"))
+
+                
+    @info.autocomplete("ball")
+    async def autocomplete_callback(self, interaction: discord.Interaction, current: str):
+        ball_options = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (interaction.user.id,)).fetchall()
+        suggestions = [f"{"🤍" if ball[6] == 1 else ""}#{ball[2]} {ball[1]} ATK:{("+" if int(ball[3]) >= 0 else "") + ball[3]}% HP:{("+" if int(ball[4]) >= 0 else "") + ball[4]}%" for ball in ball_options]
+        filtered_suggestions = [s for s in suggestions if current.lower() in s.lower()][:25]
+        return [
+            app_commands.Choice(name=suggestion, value=suggestion) for suggestion in filtered_suggestions
+        ]
+
+async def setup(bot):
+    if bot.tree.get_command("info"):
+        bot.tree.remove_command("info")
+    await bot.add_cog(InfoCommand(bot))

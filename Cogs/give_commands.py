@@ -14,7 +14,6 @@ class GiveCommand(commands.Cog):
     async def give(self, interaction: discord.Interaction, ball: str, user: discord.User):
         ball = "".join([s.replace("🤍", "") for s in ball])
         ball = ball.split()
-        print(ball)
         if not cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ? AND catch_id = ?', (interaction.user.id, ball[1], ball[0][1:])).fetchone():
             await interaction.response.send_message("The Testball Could Not Be Found", ephemeral = True)
         elif interaction.user == user:
