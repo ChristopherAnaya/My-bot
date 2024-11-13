@@ -52,7 +52,8 @@ class PageButton(discord.ui.Button):
                     description=f"ATK: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[2]) * (int(x[3]) / 100 + 1 ))} " \
                                 f"({'+' if x[3][0] != '-' else ''}{str(int(x[3]))}%)∙" \
                                 f"HP: {int(int(cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[3]) * (int(x[4]) / 100 + 1 ))} " \
-                                f"({'+' if x[4][0] != '-' else ''}{str(int(x[4]))}%)",
+                                f"({'+' if x[4][0] != '-' else ''}{str(int(x[4]))}%)" \
+                                f"{''.join('/' if z == '-' else ' | ' if z == ' ' else z for z in x[5])}",
                     emoji=cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (x[1],)).fetchone()[1]
                 )
                 for x in paginated_balls

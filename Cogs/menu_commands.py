@@ -54,7 +54,7 @@ class MenuCommand(commands.Cog):
                 if sort == "alphabetic":
                     allballs = sorted(allballs, key = lambda x: x[1])
                 elif sort == "catch_date":
-                    allballs = sorted(allballs, key = lambda x: x[5])
+                    allballs = sorted(allballs, key = lambda x: x[5])[::-1]
                 elif sort == "rarity":
                     allballs = sorted(allballs, key = lambda x: (ball_data(x)[6], x[1]))
                 elif sort == "health":

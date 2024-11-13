@@ -19,9 +19,13 @@ class GiveCommand(commands.Cog):
         elif interaction.user == user:
             await interaction.response.send_message("You cannot give a testball to yourself.")
         else:
-            cursor.execute('UPDATE catches SET past_owner = ?, user_id = ?, favorite = ? WHERE catch_name = ? AND catch_id = ?', (interaction.user.id, user.id, 0, ball[1], ball[0][1:]))
-            conn.commit()
-            await interaction.response.send_message(f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (ball[1],)).fetchone()[1]}{ball[0]} {ball[1]} (`{ball[2][4:]}/{ball[3][3:]}`) to <@{user.id}>")
+            if cursor.execute('SELECT * FROM catches WHERE catch_name = ? AND catch_id = ?', (ball[1], ball[0][1:])).fetchone()[6] == 1:
+                view = ConfirmView(self, ball, interaction.user, user)
+                await interaction.response.send_message("This ball is marked as a favorite. Are you sure you want to give it?", view=view, ephemeral=True)
+            else:
+                cursor.execute('UPDATE catches SET past_owner = ?, user_id = ?, favorite = ? WHERE catch_name = ? AND catch_id = ?', (interaction.user.id, user.id, 0, ball[1], ball[0][1:]))
+                conn.commit()
+                await interaction.response.send_message(f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (ball[1],)).fetchone()[1]}{ball[0]} {ball[1]} (`{ball[2][4:]}/{ball[3][3:]}`) to <@{user.id}>")
 
                 
     @give.autocomplete("ball")
@@ -32,6 +36,27 @@ class GiveCommand(commands.Cog):
         return [
             app_commands.Choice(name=suggestion, value=suggestion) for suggestion in filtered_suggestions
         ]
+
+class ConfirmView(discord.ui.View):
+    def __init__(self, cog, ball, user, target_user):
+        super().__init__()
+        self.cog = cog
+        self.ball = ball
+        self.user = user
+        self.target_user = target_user
+
+    @discord.ui.button(label="✔️", style=discord.ButtonStyle.green)#add cutom emoji these ones purple
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        cursor.execute('UPDATE catches SET past_owner = ?, user_id = ?, favorite = ? WHERE catch_name = ? AND catch_id = ?', (self.user.id, self.target_user.id, 0, self.ball[1], self.ball[0][1:]))
+        conn.commit()
+        await interaction.response.send_message(f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (self.ball[1],)).fetchone()[1]}{self.ball[0]} {self.ball[1]} (`{self.ball[2][4:]}/{self.ball[3][3:]}`) to <@{self.target_user.id}>")
+        self.stop()
+
+    @discord.ui.button(label="✖️", style=discord.ButtonStyle.red)
+    async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("The action has been cancelled.", ephemeral=True)
+        self.stop()
+
 
 async def setup(bot):
     if bot.tree.get_command("give"):

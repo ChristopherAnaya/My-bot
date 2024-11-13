@@ -12,7 +12,7 @@ class FavoriteCommand(commands.Cog):
     @app_commands.describe(ball="The ball")
     async def favorite(self, interaction: discord.Interaction,ball: str):
         ball = "".join([s.replace("🤍", "") for s in ball])
-        print(ball)
+       
         ball = ball.split()
         if not cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ? AND catch_id = ?', (interaction.user.id, ball[1], ball[0][1:])).fetchone():
             await interaction.response.send_message("The Testball Could Not Be Found", ephemeral = True)

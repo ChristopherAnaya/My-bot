@@ -7,20 +7,23 @@ from Menu_Extras import create_card
 from Databases.databases import load_data
 cursor, cursor2, _, _, _, _ = load_data()
 
-class InfoCommand(commands.Cog):
+class LastCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="info", description="Info on a ball i think")
-    @app_commands.describe(ball="The ball")
-    async def info(self, interaction: discord.Interaction, ball: str):
-        ball = "".join([s.replace("🤍", "") for s in ball])
-        ball = ball.split()
-        
-        if not cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ? AND catch_id = ?', (interaction.user.id, ball[1], ball[0][1:])).fetchone():
-            await interaction.response.send_message("The Testball Could Not Be Found", ephemeral = True)
-        else:
-            choice = cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ? AND catch_id = ?', (interaction.user.id, ball[1], ball[0][1:])).fetchone()
+    @app_commands.command(name="last", description="Shows your completion of owned and missing TestBalls.")
+    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
+    async def last(self, interaction: discord.Interaction, user: discord.User = None):
+        if user is None:
+            user = interaction.user
+        if not cursor.execute('SELECT * FROM catches WHERE user_id = ?', (user.id,)).fetchone():
+            if user.id == interaction.user.id:
+                await interaction.response.send_message("You don't have any testballs yet!")
+            else:
+                await interaction.response.send_message(f"{user.name} doesn't have any testballs yet!")      
+        else:    
+            allballs = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (user.id,)).fetchall()
+            choice = sorted(allballs, key = lambda x: (x[5]))[-1]
             time_convert = "".join(x if x not in ["-", ":"] else " " for x in choice[5]).split()
             dt = datetime.datetime(int(time_convert[0]), int(time_convert[1]), int(time_convert[2]), int(time_convert[3]), int(time_convert[4]))
             timestamp = int(time.mktime(dt.timetuple()))
@@ -39,17 +42,9 @@ class InfoCommand(commands.Cog):
             cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[4],
             cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (choice[1],)).fetchone()[5]), filename="card.png"))
 
-                
-    @info.autocomplete("ball")
-    async def autocomplete_callback(self, interaction: discord.Interaction, current: str):
-        ball_options = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (interaction.user.id,)).fetchall()
-        suggestions = [f"{"🤍" if ball[6] == 1 else ""}#{ball[2]} {ball[1]} ATK:{("+" if int(ball[3]) >= 0 else "") + ball[3]}% HP:{("+" if int(ball[4]) >= 0 else "") + ball[4]}%" for ball in ball_options]
-        filtered_suggestions = [s for s in suggestions if current.lower() in s.lower()][:25]
-        return [
-            app_commands.Choice(name=suggestion, value=suggestion) for suggestion in filtered_suggestions
-        ]
+
 
 async def setup(bot):
-    if bot.tree.get_command("info"):
-        bot.tree.remove_command("info")
-    await bot.add_cog(InfoCommand(bot))
+    if bot.tree.get_command("last"):
+        bot.tree.remove_command("last")
+    await bot.add_cog(LastCommand(bot))
