@@ -3,7 +3,6 @@ from discord.ext import commands
 from discord import app_commands
 from discord.ui import Modal, TextInput, Button, View
 import random
-import os
 import datetime
 from Databases.databases import load_data
 
@@ -81,8 +80,8 @@ class SpawnCommand(commands.Cog):
         button.callback = button_callback
         view = View()
         view.add_item(button)
-        await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
-
+        await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\Github\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
+                                                                                                                                                                                      
 async def setup(bot):
     if bot.tree.get_command("spawn"):
         bot.tree.remove_command("spawn")

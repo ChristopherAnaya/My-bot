@@ -2,11 +2,11 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 
 def create_card(atk, hp, x, ability_text, description_text):
-    base_image = Image.open(rf"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Card_art\{x}_Card.png").convert("RGBA")
-    stats_font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Fonts\TT Rounds Neue Trial Compressed ExtraBold.ttf", size=35)
-    title_font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Fonts\ArsenicaTrial-Extrabold.ttf", size=49)
-    abilities_font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Fonts\TT Rounds Neue Trial Condensed Bold.ttf", size=27)
-    description_font = ImageFont.truetype(r"C:\Users\Chris\OneDrive\Documents\Discord-Bot\Art\Fonts\TT Rounds Neue Trial Condensed Bold.ttf", size=8)
+    base_image = Image.open(rf"C:\Users\Chris\OneDrive\Documents\GithubDiscord-Bot\Art\Card_art\{x}_Card.png").convert("RGBA")
+    stats_font = ImageFont.truetype(r"C:\Users\Chris\Github\Discord-Bot\Art\Fonts\TT Rounds Neue Trial Compressed ExtraBold.ttf", size=35)
+    title_font = ImageFont.truetype(r"C:\Users\Chris\Github\Discord-Bot\Art\Fonts\ArsenicaTrial-Extrabold.ttf", size=49)
+    abilities_font = ImageFont.truetype(r"C:\Users\Chris\Github\Discord-Bot\Art\Fonts\TT Rounds Neue Trial Condensed Bold.ttf", size=27)
+    description_font = ImageFont.truetype(r"C:\Users\Chris\Github\Discord-Bot\Art\Fonts\TT Rounds Neue Trial Condensed Bold.ttf", size=8)
 
     draw = ImageDraw.Draw(base_image)
 
