@@ -19,9 +19,4 @@ async def on_ready():
     await bot.tree.sync() 
     print("Slash commands synced.") 
 
-    channel = bot.get_channel(1245675428367175753) 
-
-    if channel:
-        await channel.send("The bot is online!")
-
 bot.run('MTMwMDk3Mzk2Nzc0NTYxODA3Mg.GZAsDr.cUFMJjYX4r_u1bGtf24Lu2hbrUdjOqQoizFp98')

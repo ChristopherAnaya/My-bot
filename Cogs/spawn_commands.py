@@ -72,16 +72,18 @@ class SpawnCommand(commands.Cog):
         self.current = random.choice([x[0] + ".png" for x in cursor2.execute('SELECT * FROM ball_data WHERE ball_rarity = ?', (rarity(random.randint(0,100)),)).fetchall()])
         
         button = Button(label="Click Me!", style=discord.ButtonStyle.primary)
-     
-        async def button_callback(interaction):
-            modal = UserInfoModal(view, button, self.clicked, self.current)
-            await interaction.response.send_modal(modal)
+        if interaction.user.id == 757769769242853436:
+            async def button_callback(interaction):
+                modal = UserInfoModal(view, button, self.clicked, self.current)
+                await interaction.response.send_modal(modal)
 
-        button.callback = button_callback
-        view = View()
-        view.add_item(button)
-        await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\Github\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
-                                                                                                                                                                                      
+            button.callback = button_callback
+            view = View()
+            view.add_item(button)
+            await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\Github\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
+        else:
+           await interaction.response.send_message(content="Fuck u ur not bob")
+                                                                                                                                                                                
 async def setup(bot):
     if bot.tree.get_command("spawn"):
         bot.tree.remove_command("spawn")
