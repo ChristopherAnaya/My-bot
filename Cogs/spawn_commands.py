@@ -82,7 +82,7 @@ class SpawnCommand(commands.Cog):
             view.add_item(button)
             await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\Github\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
         else:
-           await interaction.response.send_message(content="Fuck u ur not bob")
+           await interaction.response.send_message(content="Error no permissions")
                                                                                                                                                                                 
 async def setup(bot):
     if bot.tree.get_command("spawn"):
