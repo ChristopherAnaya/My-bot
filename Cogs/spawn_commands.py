@@ -31,16 +31,16 @@ class UserInfoModal(Modal):
         name = (self.name_input.value).strip().title()
         if self.clicked == True:
             await interaction.response.send_message(f"{interaction.user.mention} I was caught already!")
-        elif name + ".png" == self.current:
+        elif name + ".png" == self.current.replace("_", " "):
             self.button.disabled = True 
-            ballname = name
+            ballname = name.replace(" ", "_")
             balltime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
 
             ballATK = str(random.randint(-20, 20))
             ballHP = str(random.randint(-20, 20))
             ballstatsuse = "/".join([("+" if x[0] != "-" else "") + x + "%" for x in [ballATK, ballHP]])
 
-            cursor.execute('SELECT COUNT(*) FROM catches WHERE catch_name = ?', (name,))
+            cursor.execute('SELECT COUNT(*) FROM catches WHERE catch_name = ?', (ballname,))
             ballid = str(cursor.fetchone()[0] + 1).zfill(8)
 
             new_ball = False
@@ -70,7 +70,6 @@ class SpawnCommand(commands.Cog):
     async def spawn(self, interaction: discord.Interaction):
         
         self.current = random.choice([x[0] + ".png" for x in cursor2.execute('SELECT * FROM ball_data WHERE ball_rarity = ?', (rarity(random.randint(0,100)),)).fetchall()])
-        
         button = Button(label="Click Me!", style=discord.ButtonStyle.primary)
         if interaction.user.id == 757769769242853436:
             async def button_callback(interaction):

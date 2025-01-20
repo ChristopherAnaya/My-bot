@@ -9,11 +9,11 @@ class MenuCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="menu", description="Shows your completion of owned and missing TestBalls.")
+    @app_commands.command(name="menu", description="uhh")
     @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
     @app_commands.describe(reverse="Reverse this shit")
     @app_commands.describe(ball="The specific ball you want")
-    @app_commands.describe(sort="The specific ball you want")
+    @app_commands.describe(sort="how u want")
     async def menu(self, interaction: discord.Interaction, user: discord.User = None, reverse: bool = False, ball: str = None, sort: str = None):
         if ball != None and not ball in [x[0] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()]:
             await interaction.response.send_message("The Testball Could Not Be Found", ephemeral = True)
@@ -28,9 +28,9 @@ class MenuCommand(commands.Cog):
                     await interaction.response.send_message(f"{user.name} doesn't have any testballs yet!")
             elif ball != None and not cursor.execute('SELECT * FROM catches WHERE user_id = ? AND catch_name = ?', (user.id, ball)).fetchone():
                 if user.id == interaction.user.id:
-                    await interaction.response.send_message(f"You don't have any {ball}s yet!")
+                    await interaction.response.send_message(f"You don't have any {ball.replace("_", " ")}s yet!")
                 else:
-                    await interaction.response.send_message(f"{user.name} doesn't have any {ball}s yet!")
+                    await interaction.response.send_message(f"{user.name} doesn't have any {ball.replace("_", " ")}s yet!")
         
             else:    
                 allballs = cursor.execute('SELECT * FROM catches WHERE user_id = ?', (user.id,)).fetchall()
@@ -82,7 +82,7 @@ class MenuCommand(commands.Cog):
         ball_options = [x[0] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()]
         suggestions = [ball for ball in ball_options if current.lower() in ball.lower()]
         return [
-            app_commands.Choice(name=suggestion, value=suggestion) for suggestion in suggestions
+            app_commands.Choice(name=suggestion.replace("_", " "), value=suggestion) for suggestion in suggestions
         ]
     
     @menu.autocomplete("sort")

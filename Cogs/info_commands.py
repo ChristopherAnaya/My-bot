@@ -46,7 +46,7 @@ class InfoCommand(commands.Cog):
         suggestions = [f"{"🤍" if ball[6] == 1 else ""}#{ball[2]} {ball[1]} ATK:{("+" if int(ball[3]) >= 0 else "") + ball[3]}% HP:{("+" if int(ball[4]) >= 0 else "") + ball[4]}%" for ball in ball_options]
         filtered_suggestions = [s for s in suggestions if current.lower() in s.lower()][:25]
         return [
-            app_commands.Choice(name=suggestion, value=suggestion) for suggestion in filtered_suggestions
+            app_commands.Choice(name=suggestion.replace("_", " "), value=suggestion) for suggestion in filtered_suggestions
         ]
 
 async def setup(bot):

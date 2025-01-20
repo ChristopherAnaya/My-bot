@@ -25,7 +25,7 @@ class GiveCommand(commands.Cog):
             else:
                 cursor.execute('UPDATE catches SET past_owner = ?, user_id = ?, favorite = ? WHERE catch_name = ? AND catch_id = ?', (interaction.user.id, user.id, 0, ball[1], ball[0][1:]))
                 conn.commit()
-                await interaction.response.send_message(f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (ball[1],)).fetchone()[1]}{ball[0]} {ball[1]} (`{ball[2][4:]}/{ball[3][3:]}`) to <@{user.id}>")
+                await interaction.response.send_message(f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (ball[1],)).fetchone()[1]}{ball[0]} {ball[1].replace("_", " ")} (`{ball[2][4:]}/{ball[3][3:]}`) to <@{user.id}>")
 
                 
     @give.autocomplete("ball")
@@ -34,7 +34,7 @@ class GiveCommand(commands.Cog):
         suggestions = [f"{"🤍" if ball[6] == 1 else ""}#{ball[2]} {ball[1]} ATK:{("+" if int(ball[3]) >= 0 else "") + ball[3]}% HP:{("+" if int(ball[4]) >= 0 else "") + ball[4]}%" for ball in ball_options]
         filtered_suggestions = [s for s in suggestions if current.lower() in s.lower()][:25]
         return [
-            app_commands.Choice(name=suggestion, value=suggestion) for suggestion in filtered_suggestions
+            app_commands.Choice(name=suggestion.replace("_", " "), value=suggestion) for suggestion in filtered_suggestions
         ]
 
 class ConfirmView(discord.ui.View):
@@ -53,7 +53,7 @@ class ConfirmView(discord.ui.View):
                        (self.user.id, self.target_user.id, 0, self.ball[1], self.ball[0][1:]))
         conn.commit()
         await interaction.response.edit_message(content="This action has been confirmed", view=self)
-        await interaction.followup.send(content=f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (self.ball[1],)).fetchone()[1]}{self.ball[0]} {self.ball[1]} (`{self.ball[2][4:]}/{self.ball[3][3:]}`) to <@{self.target_user.id}>", view=self)
+        await interaction.followup.send(content=f"You just gave the testball{cursor2.execute('SELECT * FROM ball_data WHERE ball_name = ?', (self.ball[1],)).fetchone()[1]}{self.ball[0]} {self.ball[1].replace("_", " ")} (`{self.ball[2][4:]}/{self.ball[3][3:]}`) to <@{self.target_user.id}>", view=self)
         self.stop()
 
     @discord.ui.button(label="✖️", style=discord.ButtonStyle.red)

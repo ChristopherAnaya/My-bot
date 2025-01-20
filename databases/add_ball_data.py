@@ -9,7 +9,7 @@ c.execute('''
         base_hp TEXT,
         ball_ability TEXT,
         ball_description TEXT,
-        ball_rarity TEXT          
+        ball_rarity TEXT                
     )
 ''')
 conn.commit()
