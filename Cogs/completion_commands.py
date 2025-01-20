@@ -11,7 +11,7 @@ class CompletionCommand(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="completion", description="Shows your completion of owned and missing TestBalls.")
-    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
+    @app_commands.describe(user="The user whose balls you want to view")
     async def completion(self, interaction: discord.Interaction, user: discord.User = None):
         if user is None:
             user = interaction.user

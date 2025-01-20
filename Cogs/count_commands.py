@@ -8,8 +8,8 @@ class CountCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name="count", description="Counts ig.")
-    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
+    @app_commands.command(name="count", description="Counts how many ball currently owned")
+    @app_commands.describe(user="The user whose balls you want to view")
     @app_commands.describe(ball="The specific ball you want")
     async def count(self, interaction: discord.Interaction, user: discord.User = None, ball: str = None):
         if ball != None and not ball in [x[0] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()]:

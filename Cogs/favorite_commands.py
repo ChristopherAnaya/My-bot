@@ -8,7 +8,7 @@ class FavoriteCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="favorite", description="Add favorites and remove or whatever")
+    @app_commands.command(name="favorite", description="Adds and removes balls from favorites")
     @app_commands.describe(ball="The ball")
     async def favorite(self, interaction: discord.Interaction,ball: str):
         ball = "".join([s.replace("🤍", "") for s in ball])

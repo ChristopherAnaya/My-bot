@@ -11,7 +11,7 @@ class InfoCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="info", description="Info on a ball i think")
+    @app_commands.command(name="info", description="Info on a specific ball")
     @app_commands.describe(ball="The ball")
     async def info(self, interaction: discord.Interaction, ball: str):
         ball = "".join([s.replace("🤍", "") for s in ball])

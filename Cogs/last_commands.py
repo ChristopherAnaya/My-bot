@@ -11,8 +11,8 @@ class LastCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="last", description="Shows your completion of owned and missing TestBalls.")
-    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
+    @app_commands.command(name="last", description="Shows the last caught ball")
+    @app_commands.describe(user="The user whose balls you want to view")
     async def last(self, interaction: discord.Interaction, user: discord.User = None):
         if user is None:
             user = interaction.user

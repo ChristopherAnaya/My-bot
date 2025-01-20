@@ -8,7 +8,7 @@ class DeleteCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="delete", description="Delete all ur data")
+    @app_commands.command(name="delete", description="Deletes all your data")
     async def delete(self, interaction: discord.Interaction):
         view = ConfirmView(self, interaction.user)
         await interaction.response.send_message("This will delete all of your data are you sure you want to do this?", view=view, ephemeral=True)

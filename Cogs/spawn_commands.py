@@ -66,10 +66,10 @@ class SpawnCommand(commands.Cog):
         self.clicked = False  
         self.current = None
     
-    @app_commands.command(name="image", description="Displays a random image and allows you to guess its name.")
+    @app_commands.command(name="spawn", description="Manually spawns a ball (bob only command)")
     async def spawn(self, interaction: discord.Interaction):
         
-        self.current = random.choice([x[0] + ".png" for x in cursor2.execute('SELECT * FROM ball_data WHERE ball_rarity = ?', (rarity(random.randint(0,100)),)).fetchall()])
+        self.current = "Democratic_Seiplenish_Empire.png"
         button = Button(label="Click Me!", style=discord.ButtonStyle.primary)
         if interaction.user.id == 757769769242853436:
             async def button_callback(interaction):

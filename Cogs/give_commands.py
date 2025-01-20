@@ -8,9 +8,9 @@ class GiveCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="give", description="Give me ur balls lil bro")
+    @app_commands.command(name="give", description="Gives a ball to another user")
     @app_commands.describe(ball="The ball")
-    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
+    @app_commands.describe(user="The user you wish to give the ball to")
     async def give(self, interaction: discord.Interaction, ball: str, user: discord.User):
         ball = "".join([s.replace("🤍", "") for s in ball])
         ball = ball.split()

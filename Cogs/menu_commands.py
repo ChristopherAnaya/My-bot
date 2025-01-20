@@ -9,11 +9,11 @@ class MenuCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="menu", description="uhh")
-    @app_commands.describe(user="The user whose TestBalls you want to view (mention or ID)")
-    @app_commands.describe(reverse="Reverse this shit")
-    @app_commands.describe(ball="The specific ball you want")
-    @app_commands.describe(sort="how u want")
+    @app_commands.command(name="menu", description="Displays a list of balls")
+    @app_commands.describe(user="The user whose balls you want to view")
+    @app_commands.describe(reverse="Reverse the order of the list")
+    @app_commands.describe(ball="A list with only a specified ball")
+    @app_commands.describe(sort="How the list is sorted")
     async def menu(self, interaction: discord.Interaction, user: discord.User = None, reverse: bool = False, ball: str = None, sort: str = None):
         if ball != None and not ball in [x[0] for x in cursor2.execute('SELECT * FROM ball_data').fetchall()]:
             await interaction.response.send_message("The Testball Could Not Be Found", ephemeral = True)

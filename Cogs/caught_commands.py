@@ -8,7 +8,7 @@ class CaughtCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="caught", description="Displays your catches.")
+    @app_commands.command(name="caught", description="An early development command has little to no use")
     async def caught(self, interaction: discord.Interaction):
         cursor.execute('SELECT * FROM catches WHERE user_id = ?', (interaction.user.id,))
         user_catches = cursor.fetchall()
