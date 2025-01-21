@@ -4,7 +4,7 @@ from Menu_Extras import Dropdown, QuitButton, PageButton, CurrentButton, CustomP
 
 class DropdownView(View):
     def __init__(self, allballs, page, author_id):
-        super().__init__()
+        super().__init__(timeout=180)
         self.allballs = allballs  
         self.page = page
         self.author_id = author_id
@@ -20,3 +20,11 @@ class DropdownView(View):
             self.add_item(CustomPageButton(allballs=allballs, author=self.author_id))
             self.add_item(QuitButton(author=self.author_id))
             self.add_item(Dropdown(allballs, page, self.author_id))
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        try:
+            await self.message.edit(view=self)
+        except AttributeError:
+            pass

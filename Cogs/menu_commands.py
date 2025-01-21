@@ -75,7 +75,9 @@ class MenuCommand(commands.Cog):
                 if reverse:
                     allballs = allballs[::-1]
 
-                await interaction.response.send_message("Choose an option:", view=DropdownView(allballs, 1, interaction.user.id))
+                view = DropdownView(allballs, 1, interaction.user.id)
+                await interaction.response.send_message("Choose an option:", view=view)
+                view.message = await interaction.original_response() 
 
     @menu.autocomplete("ball")
     async def autocomplete_callback(self, interaction: discord.Interaction, current: str):

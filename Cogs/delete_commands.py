@@ -12,14 +12,15 @@ class DeleteCommand(commands.Cog):
     async def delete(self, interaction: discord.Interaction):
         view = ConfirmView(self, interaction.user)
         await interaction.response.send_message("This will delete all of your data are you sure you want to do this?", view=view, ephemeral=True)
+        view.message = await interaction.original_response()
             
 class ConfirmView(discord.ui.View):
     def __init__(self, cog, user):
-        super().__init__()
+        super().__init__(timeout = 60)
         self.cog = cog
         self.user = user
 
-    @discord.ui.button(label="<:Check:1306356029554032669>", style=discord.ButtonStyle.green)#add cutom emoji these ones purple
+    @discord.ui.button(label="Yes", style=discord.ButtonStyle.green)#add cutom emoji these ones purple
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         for child in self.children:
             child.disabled = True
@@ -31,12 +32,17 @@ class ConfirmView(discord.ui.View):
         self.stop()
         
 
-    @discord.ui.button(label="<:X_:1306356011887497216>", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="No", style=discord.ButtonStyle.red)
     async def cancel(self, interaction: discord.Interaction, button: discord.ui.Button):
         for child in self.children:
             child.disabled = True
         await interaction.response.edit_message(content="The action has been cancelled.", view=self)
         self.stop()
+
+    async def on_timeout(self):
+        for child in self.children:
+            child.disabled = True
+        await self.message.edit(view=self)
 
 async def setup(bot):
     if bot.tree.get_command("delete"):

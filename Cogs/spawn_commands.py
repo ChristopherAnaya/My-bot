@@ -8,7 +8,6 @@ from Databases.databases import load_data
 
 cursor, cursor2, cursor3, conn, _, conn3 = load_data()
 
-
 def rarity(x):
     if x <= 10:
         return "t1"
@@ -18,20 +17,21 @@ def rarity(x):
         return "t3"
 
 class UserInfoModal(Modal):
-    def __init__(self, view, button, clicked, current):
+    def __init__(self, view, button, current):
         super().__init__(title="Catch This Testball!")
         self.button = button
         self.view = view
-        self.clicked = clicked
         self.current = current
         self.name_input = TextInput(label="Name Of This Ball", placeholder="Your Guess")
         self.add_item(self.name_input)
     
     async def on_submit(self, interaction: discord.Interaction):
+        global clicked
         name = (self.name_input.value).strip().title()
-        if self.clicked == True:
+        if clicked == True:
             await interaction.response.send_message(f"{interaction.user.mention} I was caught already!")
         elif name + ".png" == self.current.replace("_", " "):
+            clicked = True
             self.button.disabled = True 
             ballname = name.replace(" ", "_")
             balltime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -56,24 +56,26 @@ class UserInfoModal(Modal):
                 response += "\n \n This is a **new countryball** that has been added to your completion!"
             await interaction.response.send_message(response)
             await interaction.message.edit(view=self.view)
-            self.clicked = True
         else:
             await interaction.response.send_message(f"{interaction.user.mention} Wrong Name!")
 
 class SpawnCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.clicked = False  
         self.current = None
     
     @app_commands.command(name="spawn", description="Manually spawns a ball (bob only command)")
     async def spawn(self, interaction: discord.Interaction):
         
         self.current = "Democratic_Seiplenish_Empire.png"
+
+        global clicked
+        clicked = False
+
         button = Button(label="Click Me!", style=discord.ButtonStyle.primary)
         if interaction.user.id == 757769769242853436:
             async def button_callback(interaction):
-                modal = UserInfoModal(view, button, self.clicked, self.current)
+                modal = UserInfoModal(view, button, self.current)
                 await interaction.response.send_modal(modal)
 
             button.callback = button_callback
