@@ -59,6 +59,17 @@ class UserInfoModal(Modal):
         else:
             await interaction.response.send_message(f"{interaction.user.mention} Wrong Name!")
 
+class CatchView(View):
+    def __init__(self, button, timeout=5):
+        super().__init__(timeout=timeout)
+        self.button = button
+        self.add_item(button)
+        self.message = None
+
+    async def on_timeout(self):
+        self.button.disabled = True
+        await self.message.edit(view=self)
+
 class SpawnCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -79,9 +90,15 @@ class SpawnCommand(commands.Cog):
                 await interaction.response.send_modal(modal)
 
             button.callback = button_callback
-            view = View()
-            view.add_item(button)
-            await interaction.response.send_message(content="A wild testingball appeared!", file=discord.File(fr"C:\Users\Chris\Github\Discord-Bot\Art\Spawn Arts\{self.current}"), view=view)
+            
+            view = CatchView(button, timeout=6005)
+            await interaction.response.send_message(
+                content="A wild testingball appeared!",
+                file=discord.File(fr"C:\Users\Chris\Github\Discord-Bot\Art\Spawn Arts\{self.current}"),
+                view=view
+            )
+
+            view.message = await interaction.original_response()
         else:
            await interaction.response.send_message(content="Error no permissions")
                                                                                                                                                                                 
