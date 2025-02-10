@@ -78,7 +78,7 @@ class SpawnCommand(commands.Cog):
     @app_commands.command(name="spawn", description="Manually spawns a ball (bob only command)")
     async def spawn(self, interaction: discord.Interaction):
         
-        self.current = "Democratic_Seiplenish_Empire.png"
+        self.current = random.choice([x[0] + ".png" for x in cursor2.execute('SELECT * FROM ball_data WHERE ball_rarity = ?', (rarity(random.randint(0,100)),)).fetchall()])
 
         global clicked
         clicked = False
